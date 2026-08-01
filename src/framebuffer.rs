@@ -3,7 +3,6 @@ pub struct Framebuffer {
     pub width: usize,
     pub height: usize,
     pub buffer: Vec<u32>,
-    pub is_alive: Vec<bool>,
     background_color: u32,
     current_color: u32,
 }
@@ -14,7 +13,6 @@ impl Framebuffer {
             width,
             height,
             buffer: vec![0; width * height],
-            is_alive: vec![false; width * height],
             background_color: 0x000000,
             current_color: 0xFFFFFF
         }
@@ -48,11 +46,23 @@ impl Framebuffer {
         }
     }
 
+    //Solo para leer si la celula esta viva o muerta
     pub fn is_alive(&self, x: usize, y:usize) -> bool {
         if let Some(color) = self.get_color(x, y) {
             color != self.background_color
         } else {
             false
+        }
+    }
+
+    //Para pintar la celula si esta viva o muerta
+    pub fn set_alive(&mut self, x: usize, y: usize, alive: bool) {
+        if x < self.width && y < self.height {
+            self.buffer[y * self.width + x] = if alive {
+                self.current_color
+            } else {
+                self.background_color
+            };
         }
     }
 }

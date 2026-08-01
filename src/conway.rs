@@ -18,3 +18,23 @@ pub fn contar_vivos(fb:&Framebuffer, x:usize, y:usize) -> u32 {
     vivos
 }
 
+pub fn actualizar_celulas(fb:&mut Framebuffer){
+    let mut nuevas_celulas: Vec<bool> = vec![false; fb.width * fb.height];
+    for y in 0..fb.height {
+        for x in 0..fb.width {
+            let vivos = contar_vivos(fb, x, y);
+            if fb.is_alive(x, y) {
+                // Celula viva sobrevive con 2 o 3 vecinos vivos; con menos o mas, muere.
+                nuevas_celulas[y * fb.width + x] = vivos == 2 || vivos == 3;
+            } else {
+                // Celula muerta con exactamente 3 vecinos vivos nace.
+                nuevas_celulas[y * fb.width + x] = vivos == 3;
+            }
+        }
+    }
+    for y in 0..fb.height {
+        for x in 0..fb.width {
+            fb.set_alive(x, y, nuevas_celulas[y * fb.width + x]);
+        }
+    }
+}
