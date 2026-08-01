@@ -3,6 +3,7 @@ pub struct Framebuffer {
     pub width: usize,
     pub height: usize,
     pub buffer: Vec<u32>,
+    pub is_alive: Vec<bool>,
     background_color: u32,
     current_color: u32,
 }
@@ -36,5 +37,21 @@ impl Framebuffer {
 
     pub fn set_current_color(&mut self, color: u32) {
         self.current_color = color;
+    }
+
+    pub fn get_color(&self, x: usize, y: usize) -> Option<u32> {
+        if x < self.width && y < self.height {
+            Some(self.buffer[y * self.width + x])
+        } else {
+            None
+        }
+    }
+
+    pub fn is_alive(&self, x: usize, y:usize) -> bool {
+        if let Some(color) = self.get_color(x, y) {
+            color != self.background_color
+        } else {
+            false
+        }
     }
 }
