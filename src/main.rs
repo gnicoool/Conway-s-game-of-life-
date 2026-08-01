@@ -3,6 +3,7 @@ use minifb::{Key, Window, WindowOptions};
 use std::time::Duration;
 
 mod framebuffer;
+mod conway;
 
 use crate::framebuffer::Framebuffer;
 
