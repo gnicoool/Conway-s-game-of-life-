@@ -4,8 +4,11 @@ use std::time::Duration;
 
 mod framebuffer;
 mod conway;
+mod organismos;
 
 use crate::framebuffer::Framebuffer;
+use crate::conway::actualizar_celulas;
+use crate::organismos::{blinker, glider, toad};
 
 fn main() {
     let window_width = 800;
@@ -23,49 +26,19 @@ fn main() {
     )
     .unwrap();
 
-    framebuffer.set_background_color(0x000000);
+    framebuffer.set_background_color(0x222538);
+    framebuffer.clear();
+    framebuffer.set_current_color(0xf7a5dc);
 
-    let mut x = 0_i32;
-    let mut x2 = 1_i32;
-    let mut x3 = 2_i32;
-    let mut speed_x = 1_i32;
+    let frame_delay = Duration::from_millis(30);
 
-    let mut y = 40_i32;
-    let mut speed_y = 1_i32;
+    blinker(&mut framebuffer, 10, 10);
+    glider(&mut framebuffer, 20, 20);
+    toad(&mut framebuffer, 30, 30);
 
-    let frame_delay = Duration::from_millis(16);
-
-    framebuffer.set_current_color(0xFFFFFF);
 
     while window.is_open() && !window.is_key_down(Key::Escape) {
-        if x3 as usize >= framebuffer_width {
-            framebuffer.set_current_color(0xF17102);
-            speed_x = -1;
-        }
-        if x <= 0 {
-            framebuffer.set_current_color(0x00FF00);
-            speed_x = 1;
-        }
-
-        x += speed_x;
-        x2 += speed_x;
-        x3 += speed_x;
-
-        // Rebote vertical.
-        if y as usize >= framebuffer_height {
-            speed_y = -1;
-        }
-        if y <= 0 {
-            speed_y = 1;
-        }
-
-        y += speed_y;
-
-        framebuffer.clear();
-        framebuffer.point(x as usize, y as usize);
-        framebuffer.point(x2 as usize, y as usize);
-        framebuffer.point(x3 as usize, y as usize);
-
+        actualizar_celulas(&mut framebuffer);
 
         window
             .update_with_buffer(&framebuffer.buffer, framebuffer_width, framebuffer_height)
